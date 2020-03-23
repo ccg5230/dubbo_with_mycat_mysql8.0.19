@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 这是Spring Boot的父级依赖，这样当前的项目就是Spring Boot项目了,
+    spring-boot-starter-parent 是一个特殊的starter，它用来提供相关的Maven默认依赖 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.13.RELEASE</version>
+    </parent>
+
+    <groupId>dubbo-boot</groupId>
+    <artifactId>dubbo-boot2</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>dubbo-boot-interface</module>
+        <module>dubbo-boot-provider</module>
+        <module>dubbo-boot-consumer</module>
+    </modules>
+
+    <properties>
+        <project.build.soureEncoding>UTF-8</project.build.soureEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- jdk版本 -->
+        <java.version>1.8</java.version>
+        <!-- SpringCloud版本号，官方最新稳定版本 -->
+        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+    </properties>
+
+    <!-- 通过dependencyManagement元素来管理jar包的版本，让子项目中引用一个依赖而不用显示的列出版本号-->
+    <dependencyManagement>
+        <dependencies>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- 中央仓库 -->
+    <repositories>
+        <repository>
+            <id>aliyun</id>
+            <name>aliyun</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>aliyun</id>
+            <name>aliyun</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

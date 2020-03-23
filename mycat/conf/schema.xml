@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+	<!-- schema标签指定的mycat逻辑数据库，非真实存在 -->
+	<schema name="Mycat" checkSQLschema="true" sqlMaxLimit="100" randomDataNode="dn1">
+		<!-- auto sharding by id (long) -->
+		<!--splitTableNames 启用，要在 name 属性使用逗号分割配置多个表,即多个表使用这个配置 -->
+		<!--name表示真实数据库表的名称；dataNode表示节点配置；rule分库分表规则:具体规则参考./rule.xml文件；rule="mod-long"是取模分片，需要在rule.xml配置节点数-->
+		<table name="user_address" dataNode="dn1" rule="auto-sharding-long" primaryKey="id" autoIncrement="true" splitTableNames ="false"/>
+		<!-- <table name="oc_call" primaryKey="ID" dataNode="dn1$0-743" rule="latest-month-calldate" /> -->
+	</schema>
+	<!-- dataNode标签指定真实数据库，由schema代理 -->
+	<dataNode name="dn1" dataHost="localhost1" database="mycat-test" />
+	<!--<dataNode name="dn2" dataHost="localhost1" database="db2" />
+	<dataNode name="dn3" dataHost="localhost1" database="db3" /> -->
+	<!-- 配置数据库连接地址 -->
+	<!-- balance 负载均衡读写分离配置 switchType=2基于主从状态切换,
+		dbDriver="jdbc"生成表主键报错：global seq is not unsupported in jdbc driver yet -->
+	<dataHost name="localhost1" maxCon="1000" minCon="10" balance="3"
+			  writeType="0" dbType="mysql" dbDriver="native" switchType="2" 
+			  slaveThreshold="100" maxRetryCount="4">
+		<!-- 检测代理数据库是否存活的配置 -->
+		<heartbeat>show slave status</heartbeat>
+		<!--dataHost的dbDriver="jdbc"如此配置mysql8。0.19可以不用带参数的url jdbc:mysql://localhost:3307?useSSL=false&amp;serverTimezone=UTC&amp;characterEncoding=utf8-->
+		<writeHost host="hostM1" url="localhost:3307" 
+		user="root" password="root1234">
+			<!-- 读库-->
+			<readHost host="hostS1" url="localhost:3308"
+			user="root" password="root1234"></readHost>
+		</writeHost>
+		<!-- <writeHost host="hostM2" url="localhost:3316" user="root" password="123456"/> -->
+	</dataHost>
+</mycat:schema>
