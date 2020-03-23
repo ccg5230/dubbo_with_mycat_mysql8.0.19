@@ -11,3 +11,5 @@ mycat\conf目录为mycat连接mysql8.0.19配置，关于mycat连接mysql8.0.19�
 mycat\mycat_seqence.sql 为mycat主键队列生成方式为数据库，需要执行sql
 
 :stuck_out_tongue_closed_eyes:待续
+
+
