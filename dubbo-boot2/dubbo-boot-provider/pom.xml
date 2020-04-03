@@ -18,6 +18,19 @@
     </properties>
 
     <dependencies>
+        <!-- 引入自定义springboot-starter -->
+        <dependency>
+            <groupId>my-sping-boot2</groupId>
+            <artifactId>exercise-spring-boot-starter</artifactId>
+            <version>1.0</version>
+            <!--包冲突，排除这个slf4j-log4j12-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- 引入 interface 模块 -->
         <dependency>
             <groupId>dubbo-boot</groupId>
@@ -123,11 +136,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-        <!--配置日志输出log4j-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
+<!--        配置日志输出log4j,springboot本身就内置了日志功能-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-logging</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>

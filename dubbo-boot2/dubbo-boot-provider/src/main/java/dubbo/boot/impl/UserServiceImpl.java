@@ -6,6 +6,8 @@ import dubbo.boot.dao.mapper.UserAddressMapper;
 import dubbo.boot.domain.UserAddress;
 import dubbo.boot.facade.UserService;
 import org.apache.dubbo.config.annotation.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -34,6 +36,8 @@ import java.util.stream.Collectors;
 /** 使用springboot configuration方式设置dubbo服务spring,需要注入bean到spring容器 */
 //@org.springframework.stereotype.Service
 public class UserServiceImpl implements UserService {
+
+    private static  final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
 //    @Resource

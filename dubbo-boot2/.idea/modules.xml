@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/dubbo-boot-consumer/dubbo-boot-consumer.iml" filepath="$PROJECT_DIR$/dubbo-boot-consumer/dubbo-boot-consumer.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-boot-interface/dubbo-boot-interface.iml" filepath="$PROJECT_DIR$/dubbo-boot-interface/dubbo-boot-interface.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-boot-provider/dubbo-boot-provider.iml" filepath="$PROJECT_DIR$/dubbo-boot-provider/dubbo-boot-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/dubbo-boot2.iml" filepath="$PROJECT_DIR$/.idea/dubbo-boot2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../exercise-spring-boot-starter/exercise-spring-boot-starter.iml" filepath="$PROJECT_DIR$/../exercise-spring-boot-starter/exercise-spring-boot-starter.iml" />
     </modules>
   </component>
 </project>

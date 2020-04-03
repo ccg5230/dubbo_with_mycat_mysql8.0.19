@@ -6,8 +6,26 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="dubbo-boot2" />
+        <module name="exercise-spring-boot-starter" />
+        <module name="dubbo-boot-interface" />
+        <module name="dubbo-boot-provider" />
+        <module name="dubbo-boot-consumer" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dubbo-boot-consumer" target="1.8" />
+      <module name="dubbo-boot-interface" target="1.8" />
+      <module name="dubbo-boot-provider" target="1.8" />
+      <module name="dubbo-boot2" target="1.8" />
+      <module name="exercise-spring-boot-starter" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="dubbo-boot-consumer" options="-parameters" />
+      <module name="dubbo-boot-interface" options="-parameters" />
+      <module name="dubbo-boot-provider" options="-parameters" />
+      <module name="exercise-spring-boot-starter" options="-parameters" />
+    </option>
   </component>
 </project>
