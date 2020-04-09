@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.ccg.ExerciesAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=exercise.starter.ccg.ExerciesAutoConfiguration

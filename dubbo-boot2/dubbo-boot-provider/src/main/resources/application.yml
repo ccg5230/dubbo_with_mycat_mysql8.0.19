@@ -1,0 +1,58 @@
+##################################################################################################
+##========================打开sharding配置需要关闭bootstrap.yml数据源配置=======================##
+##################################################################################################
+
+###==========================数据分片+读写分离配置=====start======================================
+spring:
+  shardingsphere:
+    datasource:
+      #数据源的名称，多个以短号隔开
+      names: 'master0,master0slave0'
+      #master数据源的配置 官网org.apache.commons.dbcp.BasicDataSource报错
+      master0:
+        type: 'com.zaxxer.hikari.HikariDataSource'
+        driver-class-name: 'com.mysql.cj.jdbc.Driver'
+        #官网spring.shardingsphere.datasource.xxx.url不对应该是jdbcUrl
+        jdbcUrl: 'jdbc:mysql://localhost:3307/mycat-test?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true'
+        username: root
+        password: root1234
+      #slave数据源的配置
+      master0slave0:
+        type: 'com.zaxxer.hikari.HikariDataSource'
+        driver-class-name: 'com.mysql.jdbc.Driver'
+        #不是官网配置参考url,是jdbcUrl
+        jdbcUrl: 'jdbc:mysql://localhost:3308/mycat-test?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true'
+        username: root
+        password: root1234
+    sharding:
+      props:
+        sql:
+          show: true
+#      default-database-strategy: ##分库策略--一个主库不能分库，否则启动报错
+#        inline:
+#          sharding-column: id
+#          algorithm-expression: 'ds$->{id % 2}'
+        #也可以自定义分片策略实现类
+        #standard:
+          #precise-algorithm-class-name: 'dubbo.boot.sharding.config.DatabaseShardingAlgorithm'
+      binding-tables: user
+      # 广播表, 其主节点是ds0
+      #broadcast-tables: t_config
+      tables:
+        user:
+          actual-data-nodes: 'ds0.user$->{0..1}'
+          table-strategy: ##表分片策略
+            inline:  #行表达式
+              sharding-column: id
+              algorithm-expression: 'user$->{id % 2}'
+          #使用全局主键生成策略snowflake
+          key-generator:
+            column: id
+            type: SNOWFLAKE
+        #t_config.actual-data-nodes: 'ds$->{0}.t_config'
+      master-slave-rules:
+        #这里的ds0需要和上面的default-database-strategy.inline.algorithm-expression，sharding.tables.user.actual-data-nodes的对应
+        ds0:
+          master-data-source-name: master0
+          slave-data-source-names: master0slave0
+##==========================数据分片+读写分离配置======end=====================================

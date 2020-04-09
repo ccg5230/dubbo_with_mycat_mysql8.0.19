@@ -1,0 +1,61 @@
+server:
+  port: 8088
+
+#也可以使用springboot自动配置@Configuration&与@Bean方式，从而不使用配置文件
+dubbo:
+  application:
+    name: 'dubbo-boot-provider'
+  scan:
+    # Base packages to scan Dubbo Component: @com.alibaba.dubbo.config.annotation.Service
+    base-packages: 'dubbo.boot'
+  protocol:
+    name: dubbo
+    port: 20880
+  registry:
+    #windows单机,N/A 表示直连
+    #zookeeper://192.168.1.115:2181?backup=192.168.1.113:2181,192.168.1.114:2181
+    address: 'zookeeper://localhost:2181'
+    timeout: 10000
+
+  #一般项目有三个配置文件，分别为生产，测试及本地，在本地设置 swagger.show=true 其他为false
+swagger:
+  show: true
+
+#自定义springboot-starter属性配置
+exer:
+  star:
+    name: test
+
+##设置全局的日志级别，如果没有设置，以log4j2.xml配置的root 的level 为准
+logging:
+  level:
+    root: info
+  config: 'classpath:logback-spring.xml'
+
+#mysql mycat配置
+### MySQL Connector/J 6.x之后   (新版连接)
+## 说明： 新版驱动url默认地址为127.0.0.1:3306，所以访问本机mysql数据库地址可以用 /// 表示
+#
+##mycat连接mysql8spring:
+    #    #    #    ##  datasource:
+  #  #  #  ##    # com.mysql.jdbc.Driver
+  #  #  #  ##    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: 'jdbc:mysql://localhost:8066/Mycat?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true'
+#    username: hostmaster
+#    password: 123456
+##mysql8连接
+#    url: 'jdbc:mysql://localhost:3307/mycat-test?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true'
+#    username: root
+#    password: root1234
+
+
+#mybatis数据库映射文件配置
+#mybatis批量别名定义
+mybatis:
+  #Could not resolve type alias 'UserAddressEntity'.  Cause: java.lang.ClassNotFoundException: Cannot find class: UserAddressEntity
+  #改用yml配置后报错无法解决，弃用别名
+#  type-aliases-package: dubbo.boot.dao.entity
+  #yml与properties的配置一样classpath不需要/开头
+  mapper-locations: 'classpath:mybatis/mapper/*.xml'
+  configuration:
+    map-underscore-to-camel-case: true

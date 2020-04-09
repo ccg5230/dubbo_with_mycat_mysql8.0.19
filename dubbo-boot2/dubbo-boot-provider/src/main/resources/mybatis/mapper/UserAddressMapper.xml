@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="dubbo.boot.dao.mapper.UserAddressMapper">
     <!-- 因为使用了Redis作为二级缓存，所以在CityMapper.xml中添加了Redis的缓存实现 -->
     <!--<cache eviction="LRU" type="org.spring.springboot.redis.RedisCache"/>-->
-    <resultMap type="UserAddressEntity" id="addressList">
+    <resultMap id="BaseResultMap" type="dubbo.boot.dao.entity.UserAddressEntity">
         <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="userName" column="user_name" jdbcType="VARCHAR"/>
         <result property="userAddress" column="user_address" jdbcType="VARCHAR"/>
@@ -16,16 +15,16 @@
     <select id="getCount" resultType="int">
         select count(1) from user_address
     </select>
-    <select id="getAddressList" resultMap="addressList">
+    <select id="getAddressList" resultMap="BaseResultMap">
         select * from user_address
     </select>
     <!-- id主键有mycat维护-->
-    <insert id="insert" parameterType="UserAddressEntity">
+    <insert id="insert" parameterType="dubbo.boot.dao.entity.UserAddressEntity">
         insert into user_address  (user_name,user_address,user_id,create_time,update_time)
         values (#{userName},#{userAddress},#{userId},#{createTime},#{updateTime})
     </insert>
 
-    <select id="getAddressById" parameterType="string" resultMap="addressList">
+    <select id="getAddressById" parameterType="string" resultMap="BaseResultMap">
         select * from student where userId = #{userId}
     </select>
 

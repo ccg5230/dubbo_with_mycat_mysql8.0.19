@@ -1,18 +1,20 @@
 package dubbo.boot;
 
-import com.ccg.HelloStarter;
+import exercise.starter.ccg.HelloStarter;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
-import org.springframework.context.annotation.ComponentScan;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableDubbo
 @EnableHystrix
-//@ComponentScan(basePackages = {"com.ccg","dubbo.boot"})
+@EnableSwagger2
+@MapperScan("dubbo.boot.dao.mapper")
 public class DubboProviderApplication implements CommandLineRunner {
     @Autowired
     HelloStarter starter;
@@ -26,5 +28,4 @@ public class DubboProviderApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         starter.welcome();
     }
-    //endregion
 }

@@ -8,6 +8,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <packaging>war</packaging>
 
     <artifactId>dubbo-boot-provider</artifactId>
 
@@ -15,6 +16,8 @@
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <dubbo.version>2.6.8</dubbo.version>
         <apache-dubbo.version>2.7.3</apache-dubbo.version>
+        <sharding-sphere.version>4.0.1</sharding-sphere.version>
+        <mybatis.version>2.1.2</mybatis.version>
     </properties>
 
     <dependencies>
@@ -23,15 +26,8 @@
             <groupId>my-sping-boot2</groupId>
             <artifactId>exercise-spring-boot-starter</artifactId>
             <version>1.0</version>
-            <!--包冲突，排除这个slf4j-log4j12-->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-        <!-- 引入 interface 模块 -->
+        <!-- 引入 dubbo的interface 模块 -->
         <dependency>
             <groupId>dubbo-boot</groupId>
             <artifactId>dubbo-boot-interface</artifactId>
@@ -40,13 +36,24 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 排除默认的tomcat 容器-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        <!-- spring-boot-devtools 热部署  -->
+        <!-- 加入 jetty 的 starter 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+        <!-- spring-boot-devtools 热部署-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
             <!-- -maven中的可选依赖(optional)-->
             <optional>true</optional>
         </dependency>
@@ -56,29 +63,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <!-- 引入阿里巴巴dubbo依赖开始 -->
-        <!-- Dubbo Spring Boot Starter -->
-        <!--<dependency>-->
-            <!--<groupId>com.alibaba.boot</groupId>-->
-            <!--<artifactId>dubbo-spring-boot-starter</artifactId>-->
-            <!--<version>0.2.1.RELEASE</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.alibaba</groupId>-->
-            <!--<artifactId>dubbo</artifactId>-->
-            <!--<version>${dubbo.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>io.netty</groupId>-->
-            <!--<artifactId>netty-all</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.curator</groupId>-->
-            <!--<artifactId>curator-framework</artifactId>-->
-            <!--<version>2.12.0</version>-->
-        <!--</dependency>-->
-        <!-- 引入阿里巴巴dubbo依赖结束 -->
 
         <!-- 引入apache的dubbo依赖开始 -->
         <dependency>
@@ -105,15 +89,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <!-- 依赖排除 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-
+        <!-- Junit依赖 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- 引入hystrix断路器,需要通过maven库找到对应版本
         https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies/ -->
         <dependency>
@@ -130,22 +112,33 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.2</version>
+            <version>${mybatis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-<!--        配置日志输出log4j,springboot本身就内置了日志功能-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-logging</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.3</version>
         </dependency>
+        <!-- ShardingSphere 的 Sharding-JDBC ：分布式数据库分库分表java中间件 -->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+            <version>${sharding-sphere.version}</version>
+        </dependency>
+        <!-- swagger ui -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -155,6 +148,28 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <!-- yml在target 和war里面没有，或者报错接口方法找不到
+        Invalid bound statement (not found): com.example.blog.dao.DemoMapper.selectByExample -->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.yml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.yml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>

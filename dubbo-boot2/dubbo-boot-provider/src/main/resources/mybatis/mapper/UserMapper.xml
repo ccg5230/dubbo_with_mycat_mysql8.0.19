@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dubbo.boot.dao.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="dubbo.boot.dao.entity.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, real_name, mobile, password,create_time,update_Time
+    </sql>
+
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List" />
+        from user
+        where id=#{id}
+    </select>
+
+    <insert id="insert" parameterType="dubbo.boot.dao.entity.User">
+        insert into user
+        (
+            <!--id,-->
+            real_name, mobile, create_time, update_time, password, del_flag
+        )
+        values
+        (
+            <!--#{id},-->
+         #{realName}, #{mobile}, #{createTime}, #{updateTime}, #{password},  #{delFlag}
+        )
+    </insert>
+
+    <update id="update" parameterType="dubbo.boot.dao.entity.User">
+        update user
+        <set>
+            <if test="realName != null ">real_name = #{realName},</if>
+            <if test="mobile != null ">mobile = #{mobile},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateTime != null ">password = #{password},</if>
+            <if test="delFlag != null ">del_flag = #{delFlag},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
