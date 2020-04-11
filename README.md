@@ -7,6 +7,9 @@ springboot2+dubbo+mycat+mybatis实现mysql8.0.19主从读写分离
 -------------------------------------------
 增加Sharding-JDBC分库分表:主从复制分表不分库实战 20200409
 -------------------------------------------------------------------
+增加Sharding-JDBC+mybatis在springboot动态数据源配置 20200411
+-------------------------------------------------------------------
+
 [Sharding-JDBC](https://shardingsphere.apache.org/)可以快速分库分表，支持分布式主键和事务，是个好中间件，maven boot-starter引入,够轻量apache官网文档不够详细，处于[Apache孵化器阶段](http://incubator.apache.org/projects/shardingsphere.html)，
 值得持续关注，和学习源码！！！
 
