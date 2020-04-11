@@ -4,16 +4,17 @@
 <mapper namespace="dubbo.boot.dao.mapper.UserMapper">
 
     <resultMap id="BaseResultMap" type="dubbo.boot.dao.entity.User" >
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="real_name" property="realName" jdbcType="VARCHAR" />
-        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
-        <result column="password" property="password" jdbcType="VARCHAR" />
+        <id property="id" column="id" jdbcType="INTEGER" />
+        <result property="realName" column="real_name"  jdbcType="VARCHAR" />
+        <result property="mobile" column="mobile" jdbcType="VARCHAR" />
+        <result property="password" column="password" jdbcType="VARCHAR" />
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, real_name, mobile, password,create_time,update_Time
+        id, real_name, mobile, password, create_time, update_Time, del_flag
     </sql>
 
     <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Long">

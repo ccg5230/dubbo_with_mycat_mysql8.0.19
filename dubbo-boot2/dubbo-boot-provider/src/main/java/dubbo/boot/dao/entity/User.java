@@ -48,4 +48,16 @@ public class User implements Serializable {
      */
     private String delFlag;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", realName='" + realName + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", password='" + password + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", delFlag='" + delFlag + '\'' +
+                '}';
+    }
 }

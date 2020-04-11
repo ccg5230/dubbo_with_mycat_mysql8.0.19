@@ -36,17 +36,21 @@ logging:
 ### MySQL Connector/J 6.x之后   (新版连接)
 ## 说明： 新版驱动url默认地址为127.0.0.1:3306，所以访问本机mysql数据库地址可以用 /// 表示
 #
-##mycat连接mysql8spring:
-    #    #    #    ##  datasource:
-  #  #  #  ##    # com.mysql.jdbc.Driver
-  #  #  #  ##    driver-class-name: com.mysql.cj.jdbc.Driver
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver  # com.mysql.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    ##mycat连接mysql8,不使用springboot自动装配连接属性要写成：jdbcUrl
 #    url: 'jdbc:mysql://localhost:8066/Mycat?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true'
 #    username: hostmaster
 #    password: 123456
 ##mysql8连接
-#    url: 'jdbc:mysql://localhost:3307/mycat-test?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true'
-#    username: root
-#    password: root1234
+    username: root
+    password: root1234
+    url: 'jdbc:mysql://localhost:3307/mycat-test?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true'
 
 
 #mybatis数据库映射文件配置
