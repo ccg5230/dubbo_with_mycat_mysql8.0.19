@@ -1,6 +1,5 @@
 package dubbo.boot.cofig;
 
-import com.google.common.collect.ImmutableMap;
 import dubbo.boot.dynamicdataSource.DatabaseContextHolder;
 import dubbo.boot.dynamicdataSource.DynamicDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -64,14 +63,16 @@ public class MybatisConfig {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean("shardingDataSource")
-    @Qualifier("shardingDataSource")
-    public DataSource getShardingDataSource(@Qualifier("shardingBaseDataSourceMaster0") DataSource shardingBaseDataSourceMaster0,
+    @Bean("shardingDataSourceMy")
+    @Qualifier("shardingDataSourceMy")
+    public DataSource shardingDataSource(@Qualifier("shardingBaseDataSourceMaster0") DataSource shardingBaseDataSourceMaster0,
                                             @Qualifier("shardingBaseDataSourceMaster0Slave0") DataSource shardingBaseDataSourceMaster0Slave0,
                                             ShardingRuleConfiguration shardingRuleConfiguration) throws SQLException {
         final Properties properties = new Properties();
-        Map<String, DataSource> dataSourceMap = ImmutableMap.of("master0", shardingBaseDataSourceMaster0);
-        dataSourceMap.put("shardingBaseDataSourceMaster0Slave0", shardingBaseDataSourceMaster0Slave0);
+        Map<String, DataSource> dataSourceMap = new HashMap<>();
+        dataSourceMap.put("ds0", shardingBaseDataSourceMaster0);
+        dataSourceMap.put("master0", shardingBaseDataSourceMaster0);
+        dataSourceMap.put("master0slave0", shardingBaseDataSourceMaster0Slave0);
         // 获取数据源对象
         final DataSource shardingDatasource = ShardingDataSourceFactory.createDataSource(dataSourceMap,
                 shardingRuleConfiguration, properties);
@@ -80,10 +81,10 @@ public class MybatisConfig {
 
 
     @Bean("dynamicDataSource")
-    @Qualifier("dynamicDataSource")
+    @Qualifier("dynamicDataSource") //@Qualifier("shardingDataSourceMy")强制不使用springboot自动实例的shardingDataSource
     public DataSource dynamicDataSource(@Qualifier("mycatDataSource") DataSource mycatDataSource,
                                         @Qualifier("mysqlDataSource") DataSource mysqlDataSource,
-                                        @Qualifier("shardingDataSource") DataSource shardingDataSource) {
+                                        @Qualifier("shardingDataSourceMy")DataSource shardingDataSource) {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> dataSourceMap = new HashMap<>(2);
         dataSourceMap.put("mycat", mycatDataSource);
@@ -125,7 +126,7 @@ public class MybatisConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(DataSource dynamicDataSource) {
+    public PlatformTransactionManager transactionManager(@Qualifier("dynamicDataSource")DataSource dynamicDataSource) {
         // 配置事务管理, 使用事务时在方法头部添加@Transactional注解即可
         return new DataSourceTransactionManager(dynamicDataSource);
     }

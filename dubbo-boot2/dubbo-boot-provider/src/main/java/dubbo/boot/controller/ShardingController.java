@@ -48,7 +48,7 @@ public class ShardingController {
     @TargetDataSource(source = DatabaseType.SHARDING_DATA_SOURCE)
     public User getUser(@PathVariable("id") Long id) {
         User user = userService.getById(id);
-        logger.info(user.toString());
+//        logger.info(user.toString());
         return user;
     }
 
