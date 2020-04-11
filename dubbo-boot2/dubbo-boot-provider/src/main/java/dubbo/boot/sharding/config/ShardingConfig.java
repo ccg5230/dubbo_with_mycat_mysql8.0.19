@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * @className ShardingConfiguration
- * @Description 改配置未起作用，创建的shardingRuleConfiguration不被使用
+ * @Description Sharding分库分表手动配置
  * @Author chungaochen
  * Date 2020/4/11 0:22
  * Version 1.0
