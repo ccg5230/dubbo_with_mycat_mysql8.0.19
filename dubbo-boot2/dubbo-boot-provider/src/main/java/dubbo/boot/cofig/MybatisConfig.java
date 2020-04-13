@@ -1,5 +1,6 @@
 package dubbo.boot.cofig;
 
+import com.zaxxer.hikari.HikariDataSource;
 import dubbo.boot.dynamicdataSource.DatabaseContextHolder;
 import dubbo.boot.dynamicdataSource.DynamicDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -7,12 +8,14 @@ import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -34,12 +37,32 @@ import java.util.Properties;
 @MapperScan(basePackages = "dubbo.boot.dao.mapper", sqlSessionFactoryRef = "sessionFactory")
 public class MybatisConfig {
 
+    @Autowired
+    private Environment environment;
+
     @Bean(name = "mycatDataSource")
     @Qualifier("mycatDataSource")
     @Primary
     @ConfigurationProperties(prefix = "spring.datasource.mycat")
     public DataSource mycatDataSource() {
-        return DataSourceBuilder.create().build();
+        //return DataSourceBuilder.create().build();
+        // 创建基础hikari数据源
+        DataSourceBuilder<HikariDataSource> hikariDataSourceBuilder = DataSourceBuilder.create().type(HikariDataSource.class);
+        HikariDataSource hikariDataSource = hikariDataSourceBuilder.driverClassName(environment.getProperty("spring.datasource.mycat.driver-class-name")).
+                url("spring.datasource.mycat.jdbcUrl").username("spring.datasource.mycat.username").password("spring.datasource.mycat.password").build();
+
+        //配置Hikari连接池
+        hikariDataSource.setAutoCommit(true);//update自动提交设置
+        hikariDataSource.setConnectionTestQuery("select 1");//连接查询语句设置
+        hikariDataSource.setConnectionTimeout(3000);//连接超时时间设置
+        hikariDataSource.setIdleTimeout(3000);//连接空闲生命周期设置
+        hikariDataSource.setIsolateInternalQueries(false);//执行查询启动设置
+        hikariDataSource.setMaximumPoolSize(3000);//连接池允许的最大连接数量
+        hikariDataSource.setMaxLifetime(1800000);//检查空余连接优化连接池设置时间,单位毫秒
+        hikariDataSource.setMinimumIdle(10);//连接池保持最小空余连接数量
+        hikariDataSource.setPoolName("hikariPool");//连接池名称
+
+        return hikariDataSource;
     }
 
     @Bean("mysqlDataSource")
@@ -66,8 +89,8 @@ public class MybatisConfig {
     @Bean("shardingDataSourceMy")
     @Qualifier("shardingDataSourceMy")
     public DataSource shardingDataSource(@Qualifier("shardingBaseDataSourceMaster0") DataSource shardingBaseDataSourceMaster0,
-                                            @Qualifier("shardingBaseDataSourceMaster0Slave0") DataSource shardingBaseDataSourceMaster0Slave0,
-                                            ShardingRuleConfiguration shardingRuleConfiguration) throws SQLException {
+                                         @Qualifier("shardingBaseDataSourceMaster0Slave0") DataSource shardingBaseDataSourceMaster0Slave0,
+                                         ShardingRuleConfiguration shardingRuleConfiguration) throws SQLException {
         final Properties properties = new Properties();
         Map<String, DataSource> dataSourceMap = new HashMap<>();
         dataSourceMap.put("ds0", shardingBaseDataSourceMaster0);
@@ -84,7 +107,7 @@ public class MybatisConfig {
     @Qualifier("dynamicDataSource") //@Qualifier("shardingDataSourceMy")强制不使用springboot自动实例的shardingDataSource
     public DataSource dynamicDataSource(@Qualifier("mycatDataSource") DataSource mycatDataSource,
                                         @Qualifier("mysqlDataSource") DataSource mysqlDataSource,
-                                        @Qualifier("shardingDataSourceMy")DataSource shardingDataSource) {
+                                        @Qualifier("shardingDataSourceMy") DataSource shardingDataSource) {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> dataSourceMap = new HashMap<>(2);
         dataSourceMap.put("mycat", mycatDataSource);
@@ -126,7 +149,7 @@ public class MybatisConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(@Qualifier("dynamicDataSource")DataSource dynamicDataSource) {
+    public PlatformTransactionManager transactionManager(@Qualifier("dynamicDataSource") DataSource dynamicDataSource) {
         // 配置事务管理, 使用事务时在方法头部添加@Transactional注解即可
         return new DataSourceTransactionManager(dynamicDataSource);
     }

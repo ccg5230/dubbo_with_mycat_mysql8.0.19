@@ -17,9 +17,9 @@ dubbo:
     address: 'zookeeper://localhost:2181'
     timeout: 10000
 
-  #一般项目有三个配置文件，分别为生产，测试及本地，在本地设置 swagger.show=true 其他为false
+  #一般项目有三个配置文件，分别为生产，测试及本地，在本地设置 swagger.enable=true 其他为false
 swagger:
-  show: true
+  enable: true
 
 #自定义springboot-starter属性配置
 exer:

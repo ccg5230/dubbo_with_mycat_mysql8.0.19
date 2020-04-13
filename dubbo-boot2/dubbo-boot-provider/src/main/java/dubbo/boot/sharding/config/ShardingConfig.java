@@ -1,5 +1,6 @@
 package dubbo.boot.sharding.config;
 
+import org.apache.shardingsphere.api.config.masterslave.LoadBalanceStrategyConfiguration;
 import org.apache.shardingsphere.api.config.masterslave.MasterSlaveRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.KeyGeneratorConfiguration;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
@@ -43,7 +44,9 @@ public class ShardingConfig {
         //配置主库从库
         List<String> slaveDataSourceNames = new ArrayList<String>();
         slaveDataSourceNames.add("master0slave0");
-        MasterSlaveRuleConfiguration masterSlaveRuleConfiguration = new MasterSlaveRuleConfiguration("ds0","master0",slaveDataSourceNames );
+        //从库负载均衡算法类型
+        LoadBalanceStrategyConfiguration loadBalance = new LoadBalanceStrategyConfiguration("round_robin");
+        MasterSlaveRuleConfiguration masterSlaveRuleConfiguration = new MasterSlaveRuleConfiguration("ds0","master0",slaveDataSourceNames, loadBalance );
         // 配置分片规则
         shardingRuleConfiguration.getTableRuleConfigs().add(tableRuleConfiguration);
         shardingRuleConfiguration.getMasterSlaveRuleConfigs().add(masterSlaveRuleConfiguration);

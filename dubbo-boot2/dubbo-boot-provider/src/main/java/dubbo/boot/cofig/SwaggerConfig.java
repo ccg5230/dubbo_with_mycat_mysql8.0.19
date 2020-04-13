@@ -12,13 +12,13 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
 public class SwaggerConfig {
-    @Value("${swagger.show}")
-    private boolean swaggerShow;//资源文件是否扫描
+    @Value("${swagger.enable}")
+    private boolean swaggerEnable;//资源文件是否扫描
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
-                .enable(swaggerShow)
+                .enable(swaggerEnable)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("dubbo.boot.controller"))
                 .paths(PathSelectors.any())
@@ -27,7 +27,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("springboot整合dubbo+mycat构建api文档")
-                .description("简单优雅的restfun风格")
+                .description("简单优雅的restful风格")
                 .termsOfServiceUrl("https://github.com/ccg5230")
                 .version("1.0")
                 .build();

@@ -69,4 +69,8 @@ spring:
         ds0:
           master-data-source-name: master0
           slave-data-source-names: master0slave0
+          #从库负载均衡算法类名称。该类需实现MasterSlaveLoadBalanceAlgorithm接口且提供无参数构造器
+          #load-balance-algorithm-class-name:
+          #从库负载均衡算法类型，可选值：ROUND_ROBIN，RANDOM。若`load-balance-algorithm-class-name`存在则忽略该配置
+          load-balance-algorithm-type: round_robin
   ##==========================数据分片+读写分离配置======end=====================================

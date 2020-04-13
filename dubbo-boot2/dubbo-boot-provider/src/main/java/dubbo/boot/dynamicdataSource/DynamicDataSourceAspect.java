@@ -26,7 +26,7 @@ public class DynamicDataSourceAspect {
         if (!DatabaseContextHolder.containsDataSource(dsId)) {
             logger.error("数据源[{}]不存在，使用默认数据源 > {}", ds.source().getSource(), point.getSignature());
         } else {
-            logger.debug("Use DataSource : {} > {}", ds.source().getSource(), point.getSignature());
+//            logger.debug("Use DataSource : {} > {}", ds.source().getSource(), point.getSignature());
             DatabaseContextHolder.setDataSource(ds.source().getSource());
         }
     }

@@ -7,6 +7,8 @@ import dubbo.boot.domain.UserAddress;
 import dubbo.boot.dynamicdataSource.annotation.TargetDataSource;
 import dubbo.boot.dynamicdataSource.common.DatabaseType;
 import dubbo.boot.service.ShardingUserService;
+import dubbo.boot.swagger.JsonResult;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,50 +45,54 @@ public class ShardingController {
         return userService.save(user) > 0;
     }
 
-    @RequestMapping(value = "/getUser/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "查找客户,查询结果分布式主键被替换未解决")
+    /**
+     * swagger 直接返回实体类，long需要转为json，否则丢失精度。可以手动转string,也可以在configuration配置
+     */
+    @RequestMapping(value = "/getUser/{userId}", method = RequestMethod.GET)
+    @ApiOperation(value = "查找客户")
+    //swagger2中long类型swagger-ui页面显示integer
+    @ApiImplicitParam(name = "userId", value = "用户id", required = true, paramType="path", dataType = "Long")
     @TargetDataSource(source = DatabaseType.SHARDING_DATA_SOURCE)
-    public User getUser(@PathVariable("id") Long id) {
-        User user = userService.getById(id);
-//        logger.info(user.toString());
-        return user;
+    public JsonResult<User> getUser(@PathVariable("userId") Long userId) {
+        return new JsonResult<User>().ok(userService.getById(userId));
     }
-
 
     @ApiOperation(value = "获取客户地址,使用springboot动态数据源，注解方式")
     @RequestMapping(value = "getAddress/mycat", method = RequestMethod.GET)
     @TargetDataSource(source = DatabaseType.MYCAT_DATA_SOURCE)
-    public List<UserAddress> getAddressLinkMycat(@RequestParam(name = "userId",required = false)String userId) {
+    public JsonResult<List<UserAddress>> getAddressLinkMycat(@RequestParam(name = "userId", required = false) String userId) {
         List<UserAddressEntity> list;
-        if(!StringUtils.isEmpty(userId)) {
-            list =  userAddressMapper.getAddressById(userId);
+        if (!StringUtils.isEmpty(userId)) {
+            list = userAddressMapper.getAddressById(userId);
         } else {
-            list =  userAddressMapper.getAddressList();
+            list = userAddressMapper.getAddressList();
         }
 
-        return list.stream().map(a->{
-            UserAddress address = new UserAddress();
-            BeanUtils.copyProperties(a, address);
-            return address;
-        }).collect(Collectors.toList());
+        List<UserAddress> results = convertUserAddresses(list);
+        return new JsonResult<List<UserAddress>>().ok(results);
     }
 
     @ApiOperation(value = "获取客户地址,使用springboot动态数据源，注解方式")
     @RequestMapping(value = "getAddress/mysql", method = RequestMethod.GET)
     @TargetDataSource(source = DatabaseType.MYSQL_DATA_SOURCE)
-    public List<UserAddress> getAddressLinkMysql(@RequestParam(name = "userId",required = false)String userId) {
+    public JsonResult<List<UserAddress>> getAddressLinkMysql(@RequestParam(name = "userId", required = false) String userId) {
         List<UserAddressEntity> list;
-        if(!StringUtils.isEmpty(userId)) {
-            list =  userAddressMapper.getAddressById(userId);
+        if (!StringUtils.isEmpty(userId)) {
+            list = userAddressMapper.getAddressById(userId);
         } else {
-            list =  userAddressMapper.getAddressList();
+            list = userAddressMapper.getAddressList();
         }
 
-        return list.stream().map(a->{
+        List<UserAddress> results = convertUserAddresses(list);
+        return new JsonResult<List<UserAddress>>().ok(results);
+    }
+
+
+    private List<UserAddress> convertUserAddresses(List<UserAddressEntity> list) {
+        return list.stream().map(a -> {
             UserAddress address = new UserAddress();
             BeanUtils.copyProperties(a, address);
             return address;
         }).collect(Collectors.toList());
     }
-
 }
